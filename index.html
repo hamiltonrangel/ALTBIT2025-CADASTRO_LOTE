@@ -5,29 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Equipamento</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
+    html, body {
       margin: 0;
-      padding: 20px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
       background-color: #f9f9f9;
     }
 
     h2 {
       text-align: center;
+      margin: 20px 0;
     }
 
     form {
-      background: #fff;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     label {
@@ -43,6 +38,7 @@
       border-radius: 5px;
       border: 1px solid #ccc;
       font-size: 16px;
+      box-sizing: border-box;
     }
 
     button {
@@ -112,7 +108,7 @@
       .then(res => res.text())
       .then(msg => {
         document.getElementById('status').textContent = 'Enviado com sucesso!';
-        document.getElementById('patrimonio').value = ''; // limpa somente o patrimônio
+        document.getElementById('patrimonio').value = ''; // limpa apenas o campo Patrimônio
         document.getElementById('patrimonio').focus();
       })
       .catch(err => {
