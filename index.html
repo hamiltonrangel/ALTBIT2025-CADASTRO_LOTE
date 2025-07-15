@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <title>Cadastro de Equipamento</title>
   <style>
-    body { font-family: Arial; margin: 30px; }
+    body { font-family: Arial; max-width: 400px; margin: 30px auto; }
     label { display: block; margin-top: 10px; }
-    button { margin-top: 20px; padding: 10px 20px; }
+    select, input, button { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    #status { margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -45,7 +47,7 @@
       e.preventDefault();
 
       const form = new FormData(this);
-      const url = 'https://script.google.com/macros/s/AKfycbwybha_2yVJWdcLYXj-NA50aJkSff9cUFCLUWjhqSdtF1PB41udGj7km4YQO7u5taZd3g/exec'; // cole aqui o link do Apps Script
+      const url = 'https://script.google.com/macros/s/AKfycbwybha_2yVJWdcLYXj-NA50aJkSff9cUFCLUWjhqSdtF1PB41udGj7km4YQO7u5taZd3g/exec';
 
       fetch(url, {
         method: 'POST',
@@ -54,7 +56,7 @@
       .then(res => res.text())
       .then(msg => {
         document.getElementById('status').textContent = 'Enviado com sucesso!';
-        document.getElementById('formulario').reset();
+        this.reset();
       })
       .catch(err => {
         document.getElementById('status').textContent = 'Erro ao enviar!';
