@@ -15,11 +15,11 @@
   <h2>Cadastro de Equipamento</h2>
   <form id="formulario">
     <label>Patrimônio:
-      <input type="text" name="patrimonio" required>
+      <input type="text" name="patrimonio" id="patrimonio" required>
     </label>
 
     <label>Equipamento:
-      <select name="equipamento" required>
+      <select name="equipamento" id="equipamento" required>
         <option value="">Selecione</option>
         <option value="Mini-PC">Mini-PC</option>
         <option value="Desktop">Desktop</option>
@@ -29,7 +29,7 @@
     </label>
 
     <label>Secretaria:
-      <select name="secretaria" required>
+      <select name="secretaria" id="secretaria" required>
         <option value="">Selecione</option>
         <option value="SEDUC">SEDUC</option>
         <option value="SESAU">SESAU</option>
@@ -56,7 +56,8 @@
       .then(res => res.text())
       .then(msg => {
         document.getElementById('status').textContent = 'Enviado com sucesso!';
-        this.reset();
+        document.getElementById('patrimonio').value = ''; // limpa apenas o patrimônio
+        document.getElementById('patrimonio').focus();    // foca novamente no campo
       })
       .catch(err => {
         document.getElementById('status').textContent = 'Erro ao enviar!';
