@@ -1,95 +1,66 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Cadastro de Equipamento</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        input[type="text"],
-        select {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Cadastro de Equipamento</title>
+  <style>
+    body { font-family: Arial; margin: 30px; }
+    label { display: block; margin-top: 10px; }
+    button { margin-top: 20px; padding: 10px 20px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Cadastro de Equipamento</h2>
-        <form action="https://script.google.com/macros/s/AKfycby5rqqcVqFcSf4euoB1MkBro6r2vxqHVjFnanalQ9J2b74-Xj_Tt_TNvWNdzrK-eCYI7Q/exec" method="POST">
-            <div class="form-group">
-                <label for="patrimonio">PATRIMÔNIO:</label>
-                <input type="text" id="patrimonio" name="patrimonio" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="equipamento">EQUIPAMENTO:</label>
-                <select id="equipamento" name="equipamento" required>
-                    <option value="">Selecione</option>
-                    <option value="mini-pc">MINI-PC</option>
-                    <option value="desktop">DESKTOP</option>
-                    <option value="notebook">NOTEBOOK</option>
-                    <option value="monitor">MONITOR</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="secretaria">SECRETARIA:</label>
-                <select id="secretaria" name="secretaria" required>
-                    <option value="">Selecione</option>
-                    <option value="seduc">SEDUC</option>
-                    <option value="sesau">SESAU</option>
-                </select>
-            </div>
-            
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
+  <h2>Cadastro de Equipamento</h2>
+  <form id="formulario">
+    <label>Patrimônio:
+      <input type="text" name="patrimonio" required>
+    </label>
+
+    <label>Equipamento:
+      <select name="equipamento" required>
+        <option value="">Selecione</option>
+        <option value="Mini-PC">Mini-PC</option>
+        <option value="Desktop">Desktop</option>
+        <option value="Notebook">Notebook</option>
+        <option value="Monitor">Monitor</option>
+      </select>
+    </label>
+
+    <label>Secretaria:
+      <select name="secretaria" required>
+        <option value="">Selecione</option>
+        <option value="SEDUC">SEDUC</option>
+        <option value="SESAU">SESAU</option>
+        <option value="SEPLAN">SEPLAN</option>
+      </select>
+    </label>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    document.getElementById('formulario').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const form = new FormData(this);
+      const url = 'https://script.google.com/macros/s/AKfycbx0qTSnqsr5Js4Q2p3D1lpxMaCctbtZH8l7stbCDXWdSvzmmCx8rkKpik-mhyuhIdvikA/exec'; // cole aqui o link do Apps Script
+
+      fetch(url, {
+        method: 'POST',
+        body: new URLSearchParams(form)
+      })
+      .then(res => res.text())
+      .then(msg => {
+        document.getElementById('status').textContent = 'Enviado com sucesso!';
+        document.getElementById('formulario').reset();
+      })
+      .catch(err => {
+        document.getElementById('status').textContent = 'Erro ao enviar!';
+        console.error(err);
+      });
+    });
+  </script>
 </body>
 </html>
