@@ -61,10 +61,64 @@
       font-weight: bold;
       color: green;
     }
+
+    /* Estilos para o contador e último cadastro */
+    .info-section {
+      margin: 20px;
+      padding: 15px;
+      background-color: #e8f5e8;
+      border-radius: 8px;
+      border: 1px solid #4CAF50;
+    }
+
+    .contador {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #2e7d32;
+      margin-bottom: 15px;
+    }
+
+    .ultimo-cadastro {
+      background-color: #f1f8e9;
+      padding: 10px;
+      border-radius: 5px;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .ultimo-cadastro h4 {
+      margin: 0 0 10px 0;
+      color: #2e7d32;
+      font-size: 16px;
+    }
+
+    .dados-linha {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .dados-linha strong {
+      color: #1b5e20;
+    }
   </style>
 </head>
 <body>
   <h2>Cadastro de Equipamento</h2>
+  
+  <!-- Seção de informações (contador e último cadastro) -->
+  <div class="info-section" id="infoSection" style="display: none;">
+    <div class="contador" id="contador">
+      Total de Cadastros: 0
+    </div>
+    <div class="ultimo-cadastro" id="ultimoCadastro">
+      <h4>Último Cadastro Realizado:</h4>
+      <div class="dados-linha" id="dadosUltimoCadastro">
+        Nenhum cadastro realizado ainda.
+      </div>
+    </div>
+  </div>
+
   <form id="formulario">
     <label>Patrimônio:
       <input type="text" name="patrimonio" id="patrimonio" required>
@@ -95,11 +149,77 @@
   <p id="status"></p>
 
   <script>
+    // Função para carregar o contador do localStorage
+    function carregarContador() {
+      const contador = localStorage.getItem('contadorCadastros');
+      return contador ? parseInt(contador) : 0;
+    }
+
+    // Função para salvar o contador no localStorage
+    function salvarContador(valor) {
+      localStorage.setItem('contadorCadastros', valor.toString());
+    }
+
+    // Função para carregar os dados do último cadastro
+    function carregarUltimoCadastro() {
+      const ultimoCadastro = localStorage.getItem('ultimoCadastro');
+      return ultimoCadastro ? JSON.parse(ultimoCadastro) : null;
+    }
+
+    // Função para salvar os dados do último cadastro
+    function salvarUltimoCadastro(dados) {
+      localStorage.setItem('ultimoCadastro', JSON.stringify(dados));
+    }
+
+    // Função para atualizar a exibição do contador
+    function atualizarContador() {
+      const contador = carregarContador();
+      document.getElementById('contador').textContent = `Total de Cadastros: ${contador}`;
+      
+      // Mostrar a seção de informações se houver cadastros
+      if (contador > 0) {
+        document.getElementById('infoSection').style.display = 'block';
+      }
+    }
+
+    // Função para atualizar a exibição do último cadastro
+    function atualizarUltimoCadastro() {
+      const ultimoCadastro = carregarUltimoCadastro();
+      const dadosElement = document.getElementById('dadosUltimoCadastro');
+      
+      if (ultimoCadastro) {
+        const dataHora = new Date(ultimoCadastro.timestamp).toLocaleString('pt-BR');
+        dadosElement.innerHTML = `
+          <strong>Patrimônio:</strong> ${ultimoCadastro.patrimonio} | 
+          <strong>Equipamento:</strong> ${ultimoCadastro.equipamento} | 
+          <strong>Secretaria:</strong> ${ultimoCadastro.secretaria} | 
+          <strong>Data/Hora:</strong> ${dataHora}
+        `;
+      } else {
+        dadosElement.textContent = 'Nenhum cadastro realizado ainda.';
+      }
+    }
+
+    // Inicializar a página
+    document.addEventListener('DOMContentLoaded', function() {
+      atualizarContador();
+      atualizarUltimoCadastro();
+    });
+
+    // Manipulador do formulário
     document.getElementById('formulario').addEventListener('submit', function(e) {
       e.preventDefault();
 
       const form = new FormData(this);
       const url = 'https://script.google.com/macros/s/AKfycbwybha_2yVJWdcLYXj-NA50aJkSff9cUFCLUWjhqSdtF1PB41udGj7km4YQO7u5taZd3g/exec';
+
+      // Capturar os dados do formulário antes do envio
+      const dadosCadastro = {
+        patrimonio: document.getElementById('patrimonio').value,
+        equipamento: document.getElementById('equipamento').value,
+        secretaria: document.getElementById('secretaria').value,
+        timestamp: new Date().toISOString()
+      };
 
       fetch(url, {
         method: 'POST',
@@ -107,8 +227,22 @@
       })
       .then(res => res.text())
       .then(msg => {
+        // Incrementar o contador
+        const novoContador = carregarContador() + 1;
+        salvarContador(novoContador);
+        
+        // Salvar os dados do último cadastro
+        salvarUltimoCadastro(dadosCadastro);
+        
+        // Atualizar as exibições
+        atualizarContador();
+        atualizarUltimoCadastro();
+        
+        // Exibir mensagem de sucesso
         document.getElementById('status').textContent = 'Enviado com sucesso!';
-        document.getElementById('patrimonio').value = ''; // limpa apenas o campo Patrimônio
+        
+        // Limpar apenas o campo Patrimônio
+        document.getElementById('patrimonio').value = '';
         document.getElementById('patrimonio').focus();
       })
       .catch(err => {
@@ -119,3 +253,4 @@
   </script>
 </body>
 </html>
+
