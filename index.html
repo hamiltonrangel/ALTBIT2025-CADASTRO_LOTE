@@ -8,7 +8,7 @@
   <!-- Define a codificação de caracteres como UTF-8 para suportar acentos -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Configuração para responsividade em dispositivos móveis -->
-  <title>Cadastro de Equipamentos</title>
+  <title>Cadastro de Equipamento</title>
   <!-- Título que aparece na aba do navegador -->
   
   <style>
@@ -24,7 +24,34 @@
       background-color: #f9f9f9;       /* Cor de fundo cinza claro */
     }
 
-   
+    /* Estilização do cabeçalho com logo */
+    .header-container {
+      text-align: center;        /* Centraliza a imagem */
+      background-color: #ffffff; /* Fundo branco para o cabeçalho */
+      padding: 20px 0;          /* Espaçamento superior e inferior */
+      border-bottom: 2px solid #4CAF50; /* Borda inferior verde */
+      margin-bottom: 20px;      /* Margem inferior */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra sutil */
+    }
+
+    .header-logo {
+      max-width: 300px;         /* Largura máxima da imagem */
+      height: auto;             /* Altura automática para manter proporção */
+      display: block;           /* Faz a imagem se comportar como bloco */
+      margin: 0 auto;           /* Centraliza a imagem */
+    }
+
+    /* Responsividade para dispositivos móveis */
+    @media (max-width: 768px) {
+      .header-logo {
+        max-width: 250px;       /* Imagem menor em telas pequenas */
+      }
+      
+      .header-container {
+        padding: 15px 0;        /* Menos padding em telas pequenas */
+      }
+    }
+
     /* Estilização do título principal */
     h2 {
       text-align: center;  /* Centraliza o texto */
@@ -171,6 +198,11 @@
 </head>
 <body>
   <!-- Início do corpo da página -->
+  
+  <!-- Cabeçalho com logo da SEPLAN -->
+  <div class="header-container">
+    <img src="logo_seplan.jpg" alt="Logo SEPLAN" class="header-logo">
+  </div>
   
   <!-- Título principal da página -->
   <h2>Cadastro de Equipamento</h2>
@@ -823,9 +855,8 @@
       
       // URL do Google Apps Script para processar os dados
       const url = 'https://script.google.com/macros/s/AKfycbypZgRslhAndXFgOXy3P0MWk7rhpV3vW59I-cqNhj97kg6W_A-9uWYe0eHZy6Gie_kibw/exec';
-        // 'https://script.google.com/macros/s/AKfycbypZgRslhAndXFgOXy3P0MWk7rhpV3vW59I-cqNhj97kg6W_A-9uWYe0eHZy6Gie_kibw/exec';
        // const url = 'https://script.google.com/macros/s/AKfycbwybha_2yVJWdcLYXj-NA50aJkSff9cUFCLUWjhqSdtF1PB41udGj7km4YQO7u5taZd3g/exec';
-      // 
+      //
 
       // Captura os dados do formulário antes do envio para armazenar localmente
       const dadosCadastro = {
