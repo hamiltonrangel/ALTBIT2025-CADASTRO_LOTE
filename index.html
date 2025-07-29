@@ -35,7 +35,7 @@
     }
 
     .header-logo {
-      max-width: 600px;         /* Largura máxima da imagem */
+      max-width: 300px;         /* Largura máxima da imagem */
       height: auto;             /* Altura automática para manter proporção */
       display: block;           /* Faz a imagem se comportar como bloco */
       margin: 0 auto;           /* Centraliza a imagem */
@@ -44,7 +44,7 @@
     /* Responsividade para dispositivos móveis */
     @media (max-width: 768px) {
       .header-logo {
-        max-width: 800px;       /* Imagem menor em telas pequenas */
+        max-width: 250px;       /* Imagem menor em telas pequenas */
       }
       
       .header-container {
@@ -194,6 +194,12 @@
       color: #999;                /* Texto cinza */
       cursor: not-allowed;        /* Cursor de não permitido */
     }
+
+    /* Estilização específica para o campo patrimônio */
+    #patrimonio {
+      text-transform: uppercase;  /* Converte automaticamente para maiúsculas */
+      font-family: 'Courier New', monospace; /* Fonte monoespaçada para melhor legibilidade */
+    }
   </style>
 </head>
 <body>
@@ -211,8 +217,8 @@
   <form id="formulario">
     <!-- Campo para número do patrimônio -->
     <label>Patrimônio:
-      <input type="text" name="patrimonio" id="patrimonio" required>
-      <!-- required: torna o campo obrigatório -->
+      <input type="text" name="patrimonio" id="patrimonio" required placeholder="Ex: ABC123, 00123, A001B">
+      <!-- type="text" permite letras, números e preserva zeros à esquerda -->
     </label>
 
     <!-- Campo de seleção para tipo de equipamento -->
