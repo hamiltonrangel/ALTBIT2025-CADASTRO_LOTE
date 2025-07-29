@@ -159,6 +159,13 @@
       font-weight: bold;   /* Texto em negrito */
       margin-right: 8px;   /* Margem direita para separar do texto */
     }
+
+    /* Estilização para campos desabilitados */
+    select:disabled {
+      background-color: #f5f5f5;  /* Fundo cinza claro */
+      color: #999;                /* Texto cinza */
+      cursor: not-allowed;        /* Cursor de não permitido */
+    }
   </style>
 </head>
 <body>
@@ -190,9 +197,33 @@
     <label>Secretaria:
       <select name="secretaria" id="secretaria" required>
         <option value="">Selecione</option>  <!-- Opção padrão vazia -->
+        <option value="AGILIZA">AGILIZA</option>
+        <option value="COMUS">COMUS</option>
+        <option value="FUNDAÇÃO SAÚDE">FUNDAÇÃO SAÚDE</option>
+        <option value="SAJUR">SAJUR</option>
+        <option value="SECAD">SECAD</option>
+        <option value="SEDES">SEDES</option>
         <option value="SEDUC">SEDUC</option>
-        <option value="SESAU">SESAU</option>
+        <option value="SEESP">SEESP</option>
+        <option value="SEFAZ">SEFAZ</option>
+        <option value="SEGOV">SEGOV</option>
+        <option value="SEGUR">SEGUR</option>
+        <option value="SEHAB">SEHAB</option>
+        <option value="SEMAM">SEMAM</option>
+        <option value="SEO">SEO</option>
+        <option value="SEPEDI">SEPEDI</option>
         <option value="SEPLAN">SEPLAN</option>
+        <option value="SESAU">SESAU</option>
+        <option value="SESEP">SESEP</option>
+        <option value="SETUR">SETUR</option>
+        <option value="SEURB">SEURB</option>
+      </select>
+    </label>
+
+    <!-- Campo de seleção para departamento -->
+    <label>Departamento:
+      <select name="departamento" id="departamento" required disabled>
+        <option value="">Primeiro selecione uma secretaria</option>
       </select>
     </label>
 
@@ -234,6 +265,435 @@
     let contadorCadastros = 0;  // Contador que zera ao recarregar a página
     let listaCadastros = [];    // Array para armazenar todos os cadastros da sessão
     
+    // Objeto com os dados de secretarias e seus respectivos departamentos
+    const secretariasDepartamentos = {
+      AGILIZA: ["ADM"],
+      COMUS: ["SESAU"],
+      "FUNDAÇÃO SAÚDE": ["CASA DA ONCOLOGIA", "HOSPITAL DE BOIÇUCANGA"],
+      SAJUR: [
+        "Corregedoria",
+        "Divisão Administrativa",
+        "Divisão Fiscal Administrativa",
+        "Divisão Fiscal Judicial",
+        "Divisão de Atendimento",
+        "Procuradoria Administrativa",
+        "Procuradoria Ambiental e Obras",
+        "Procuradoria Fiscal",
+        "Procuradoria Judicial",
+        "Procuradoria Trabalhista",
+        "Procuradoria de Defesa do Consumidor",
+        "Recepção",
+        "SEJUSC"
+      ],
+      SECAD: [
+        "ALMOXARIFADO",
+        "Arquivo Central",
+        "Departamento de Suprimentos",
+        "Divisão Patrimonial",
+        "Divisão de Benefícios",
+        "Divisão de Contratação de Serviços",
+        "Divisão de Controle de Tráfego",
+        "Divisão de Encargos Gerais",
+        "Divisão de Gestão de Estoques",
+        "Divisão de Manutenção",
+        "Divisão de Pagamentos e Controle",
+        "Divisão de Recrutamento, Seleção e Admissão",
+        "Gestão de Contratos",
+        "Segurança do Trabalho"
+      ],
+      SEDES: [
+        "ADMINISTRATIVO",
+        "Banco do povo",
+        "Bolsa Família",
+        "CENTRO COMUNITÁRIO",
+        "CENTRO COMUNITÁRIO MORRO DO ABRIGO",
+        "CIP BOIÇUCANGA",
+        "CIP TOPOLÂNDIA",
+        "COORDENADORIA DA MULHER",
+        "CRAS",
+        "CRAS - Boiçucanga",
+        "CRAS - Costa Norte",
+        "CRAS - TOPOLANDIA",
+        "CREAS",
+        "Cadastro único",
+        "Casa da Criança - Barequeçaba",
+        "Casa da Poderosa",
+        "Casa do Acolhimento - Pontal da Cruz",
+        "Casa do Conselho",
+        "Cidadão Criança",
+        "Conselho Tutelar",
+        "Conselho Tutelar - Boiçucanga",
+        "Departamento de Desenvolvimento Humano",
+        "Departamento de Relações de Emprego e Trabalho",
+        "Divisão de Assistência Social",
+        "Divisão de Auxílio ao Trabalhador",
+        "Divisão de Formação Profissional",
+        "Divisão de Geração de Renda",
+        "Divisão de Projetos Sociais",
+        "NASI - Costa Sul",
+        "Nucleo de Atendimento São Francisco",
+        "Núcleo de Atendimento - Costa Sul",
+        "Núcleo de Atendimento Costa Norte",
+        "PAT",
+        "PAT Regional Costa Norte",
+        "PROJETO VIRAÇÃO",
+        "Projeto Garoça",
+        "Regional Costa Norte",
+        "SEBRAE"
+      ],
+      SEDUC: [
+        "Creche Diva Bernardino",
+        "EMEI Mundo Encantado",
+        "EM Profª Joana Alves dos Reis",
+        "EM Profª Cynthia Cliquet Luciano",
+        "Creche da Enseada (Maria Leonarda da Costa)",
+        "EM Solange de Paula",
+        "EMEI Pônei Azul",
+        "EM Profª Maria Alice Rangel",
+        "EMEI Elefante Colorido",
+        "Creche Débora Tavares Bahia",
+        "Berçário Amigos da Criança",
+        "EMEI Luciana da Silveira Gonçalves Chapeuzinho Vermelho",
+        "Creche Dona Laurinda",
+        "EMEI Sebastião Leme da Silva Pingo de Gente",
+        "EM Profº Walfrido Maciel Monteiro",
+        "EMEI Iraydes Lobo Viana do Rego Algodão Doce",
+        "Creche Semírames Tavolaro Passos",
+        "EM Profª Maria Francisca Santana de Moura Tavolaro",
+        "EM Profº Dr. José Machado Rosa",
+        "EMEI Profª Emília Pinder Peteleco",
+        "EM Henrique Botelho",
+        "Creche São Sebastião",
+        "Berçário Santana II",
+        "Creche Maria Fernanda Moraes Mendes",
+        "Creche Adriana Vasques Fernandes (Berçário Santana I)",
+        "Creche e EMEI Meire Vasques dos Santos",
+        "EMEI Profª Teresa Mota Santos Reino da Alegria",
+        "EM Profª Verena de Oliveira Dória",
+        "EM Profª Iraydes Lobo Vianna do Rego",
+        "EM Profª Patrícia Viviani Santana",
+        "Creche Eugênia Andrada Abreu",
+        "Creche de Barequeçaba",
+        "EM de Barequeçaba",
+        "EMEI Arco-Íris",
+        "EM Profª Luiza Helena de Barros",
+        "EM Profº João Gabriel de Sant'Ana",
+        "EMEI Bolinha de Sabão",
+        "Creche de Maresias",
+        "Creche Gabriel Almeida Teixeira Lobo",
+        "EMEI Arlete Nascimento Moura",
+        "EM Profª Edilleusa Brasil Soares de Souza",
+        "Creche de Boiçucanga I",
+        "Creche de Boiçucanga Unidade II",
+        "EMEI Gilmar Furtado de Oliveira Alegria das Crianças",
+        "EM Profª Guiomar Aparecida da Conceição Souza",
+        "EM Profº Antonio Luiz Monteiro",
+        "Creche de Camburi",
+        "EM de Camburi",
+        "EMEI Profº Lino Marques Vicente Sementinha",
+        "EM Mathew Lucca Carmo Damasceno",
+        "EM Maria da Conceição de Deus Santos",
+        "EMEI Cavalinho de Pau",
+        "Creche da Barra do Sahy",
+        "EM Henrique Tavares de Jesus",
+        "EMEI Sonho de Criança",
+        "Creche de Juquehy I",
+        "Creche Leonardo de Jesus Santos",
+        "Creche de Juquehy Unidade 3",
+        "EMEI Profº Manoel Ferreira Matos Branca de Neve",
+        "EM Profª Nair Ribeiro de Almeida",
+        "Creche Gabriela Silva Oliveira dos Santos",
+        "EM Profª Maria Virgínia Silva",
+        "EMEI Pir Lim Pim Pim",
+        "EM Profª Sebastiana Costa Bittencourt",
+        "Creche Peraltinha",
+        "EM Profª Vilma Aparecida de Almeida Ribas",
+        "EMEI Carrossel"
+      ],
+      SEESP: [
+        "Departamento de Esportes",
+        "Departamento de Lazer e Recreação",
+        "Divisão Administrativa",
+        "Divisão de Esportes",
+        "Divisão de Eventos Esportivos",
+        "Divisão de Eventos de Lazer e Recreação",
+        "Divisão de Formação Esportiva",
+        "Divisão de Manutenção de Praças Esportivas",
+        "Divisão de Projetos da Juventude",
+        "Escola de Vela"
+      ],
+      SEFAZ: [
+        "Auditoria de Controladoria Interna",
+        "Cadastro Técnico",
+        "DIV FISC DE POSTURAS MUNICIPAIS",
+        "Departamento de Receita",
+        "Divisão Financeira",
+        "Divisão de Cadastro Fiscal - AGILIZA",
+        "Divisão de Cadastro Técnico",
+        "Divisão de Dívida Ativa e Cobrança",
+        "Divisão de Fiscalização de Posturas Municipais",
+        "Divisão de Inspetoria Fiscal",
+        "Divisão de Planejamento Econômico",
+        "Divisão de Tesouraria",
+        "Divisão de Tributação",
+        "Recepção"
+      ],
+      SEGOV: [
+        "Cartório Eleitoral Centro",
+        "Centro Comunitário Jaraguá",
+        "Cerimonial",
+        "Conselho Tutelar",
+        "Departamento de Gabinete do Vice-Prefeito",
+        "Divisão Administrativa",
+        "Divisão de Atendimento ao Usuário",
+        "Divisão de Gestão e Sistema",
+        "Divisão de Jornalismo",
+        "Divisão de Marketing",
+        "Divisão de Portos e Energia",
+        "Divisão de Relações Públicas",
+        "Divisão de Tecnologia e Qualidade",
+        "Fundo Social",
+        "Junta Militar",
+        "Ouvidoria",
+        "SEGOV"
+      ],
+      SEGUR: [
+        "Base da rua da praia",
+        "COI",
+        "Canil",
+        "Corregedoria",
+        "Departamento da Guarda Municipal",
+        "Divisão Administrativa",
+        "Divisão da Guarda Civil",
+        "Divisão da Guarda Patrimonial",
+        "Divisão de Defesa Civil",
+        "Divisão de Defesa Civil PG",
+        "Divisão de Processamento de Multas",
+        "Divisão de Transporte - Rodoviária",
+        "Divisão do Tráfego",
+        "Guarda Mirim",
+        "Monitoramento"
+      ],
+      SEHAB: [
+        "CONSELHO MUNICIPAL DE HABITAÇÃO CMHRF",
+        "Departamento Administrativo",
+        "Departamento de Habitação",
+        "Div. de Desenvolvimento Urbano e Integração Regional",
+        "Divisão de Contratos e Convênios",
+        "Divisão de Geoprocessamento",
+        "Divisão de Habitação Popular",
+        "Divisão de Orçamento",
+        "Divisão de Projetos Urbanísticos",
+        "Recepção"
+      ],
+      SEMAM: [
+        "Departamento de Meio Ambiente",
+        "Departamento de Pesca e Abastecimento",
+        "Divisão - Licenciamento Ambiental",
+        "Divisão de Agricultura e Abastecimento",
+        "Divisão de Educação Ambiental",
+        "Divisão de Fiscalização de Agressões Ambientais",
+        "Divisão de Pesca",
+        "Divisão de Recursos Hídricos",
+        "Divisão de Resíduos Urbanos",
+        "Divisão de Saneamento",
+        "Observatório"
+      ],
+      SEO: [
+        "Departamento de Obras Particulares",
+        "Departamento de Obras Públicas",
+        "Divisão Administrativa",
+        "Divisão de Fiscalização",
+        "Divisão de Fiscalização de Obras Públicas",
+        "Divisão de Gerenciamento de Contratos",
+        "Divisão de Licenciamento Ambiental",
+        "Divisão de Licenciamento de Obras Particulares",
+        "Divisão de Projetos e Orçamentos",
+        "Divisão de Pré-análise de Projetos",
+        "Divisão de Topografia",
+        "Protocolo",
+        "Secretaria de Obras"
+      ],
+      SEPEDI: [
+        "Departamento de Políticas das Pessoas com Deficiência",
+        "Departamento de Políticas de Pessoas Idosas",
+        "Divisão Administrativa",
+        "Divisão de Atendimento Especializado ao Idoso",
+        "Divisão de Atendimento e Benefícios",
+        "Divisão de Programas e Projetos Inclusivos",
+        "Divisão de Programas e Projetos a Pessoas Idosas"
+      ],
+      SEPLAN: [
+        "ADM",
+        "Administrativo",
+        "Departamento de Planejamento",
+        "Departamento de Tecnologia e Informação"
+      ],
+      SESAU: [
+        "ALMOXARIFADO DA SAÚDE",
+        "Assistência Social",
+        "CAPS AD",
+        "CAPS INFANTIL",
+        "CAPS1 - TOPOLANDIA",
+        "CASA DA DENGUE",
+        "CEMIN - Topolândia",
+        "CENTRAL DE REGULAÇÃO",
+        "CENTRO DE REABILITAÇÃO BOIÇUCANGA",
+        "CENTRO ESPECIALIDADES COSTA NORTE",
+        "CEO - Centro de Especialidades Odontologicas",
+        "CIAMA - Topolândia",
+        "COMUS",
+        "Centro de Saude Enseada",
+        "Centro de Saúde Centro",
+        "Centro de saúde Topolândia",
+        "DEPARTAMENTO DE PLANEJAMENTO EM SAÚDE",
+        "Departamento de Administração e Controle",
+        "Departamento de Planejamto",
+        "Departamento de Vigilância e Saúde",
+        "Divisão Administrativa",
+        "Divisão Médica",
+        "Divisão Odontológica",
+        "Divisão de Avaliação e Controle",
+        "Divisão de Controle de Zoonoses e Vetores",
+        "Divisão de Emergências",
+        "Divisão de Enfermagem e Técnicos",
+        "Divisão de Expediente",
+        "Divisão de Ouvidoria",
+        "Divisão de Programas",
+        "Divisão de Recursos Humanos",
+        "Divisão de Tráfego Centro e Costa Norte",
+        "Divisão de Tráfego Costa Sul",
+        "Divisão de Vigilância Epidemiológica",
+        "Divisão de Vigilância Sanitária",
+        "FUNDAÇÃO DE SAÚDE",
+        "FUNDO MUNICIPAL DE SAÚDE",
+        "Farmácia - Rodoviária",
+        "GABINETE SAÚDE",
+        "HOSPITAL",
+        "HOSPITAL DAS CLÍNICAS BOIÇUCANGA",
+        "Monitoramento COVID-19",
+        "PSF PAÚBA",
+        "Posto de Saude Barequeçaba",
+        "REABILITAÇÃO TOPOLANDIA",
+        "REFORÇA",
+        "SAMU",
+        "Serviço Social",
+        "UBS Boiçucanga",
+        "UBS Enseada",
+        "UBS Morro do Abrigo",
+        "USF BAREQUEÇABA",
+        "USF BARRA DO SAÍ",
+        "USF BARRA DO UNA",
+        "USF BOIÇUCANGA 1",
+        "USF BOIÇUCANGA 2",
+        "USF CAMBURI",
+        "USF CANTO DO MAR",
+        "USF CENTRO",
+        "USF ENSEADA 1",
+        "USF ENSEADA 2",
+        "USF ITATINGA 1",
+        "USF ITATINGA 2",
+        "USF JARAGUA",
+        "USF JUQUEI 1",
+        "USF JUQUEI 2",
+        "USF MARESIAS 2",
+        "USF MARESIAS I",
+        "USF MORRO DO ABRIGO",
+        "USF OLARIA",
+        "USF PONTAL DA CRUZ",
+        "USF VARADOURO",
+        "USO",
+        "USO - Vila Amélia"
+      ],
+      SESEP: [
+        "Dep. da Adm. Centro",
+        "Dep. da Adm. Costa Norte",
+        "Dep. da Adm. Costa Sul",
+        "Dep. da Adm. Topolândia",
+        "Departamento de Frota",
+        "Divisão Administrativa",
+        "Divisão Boiçucanga",
+        "Divisão Centro Sul",
+        "Divisão Costa Norte",
+        "Divisão Juquehy",
+        "Divisão Maresias",
+        "Divisão de Cemitérios",
+        "Divisão de Centro Norte",
+        "Divisão de Custo Financeiro",
+        "Reg. Barequeçaba",
+        "Regional Costa Sul",
+        "Topolândia",
+        "VIVEIRO CENTRAL"
+      ],
+      SETUR: [
+        "Batuíra",
+        "Biblioteca",
+        "CIT",
+        "Casa da Arte",
+        "Casa da Cultura",
+        "Casa da Música",
+        "Departamento de Cultura",
+        "Departamento de Patrimônio",
+        "Departamento de Turismo",
+        "Divisão de Administração dos Balneários",
+        "Divisão de Eventos Culturais",
+        "Divisão de Fomento ao Turismo",
+        "Divisão de Patrimônio Histórico",
+        "Divisão de Terminais Rodoviários",
+        "Fundação Deodato Santana",
+        "Núcleo de Arqueologia",
+        "Praça do pôr do sol",
+        "Projeto Guri",
+        "Teatro",
+        "VIDA MARINHA"
+      ],
+      SEURB: [
+        "Cadastro Técnico",
+        "Departamento Administrativo",
+        "Departamento de Planejamento",
+        "Divisão de Cadastro Imobiliário",
+        "Divisão de Fiscalização de Obras Particulares",
+        "Secretaria de Urbanismo"
+      ]
+    };
+
+    /**
+     * Função para popular o combobox de departamentos baseado na secretaria selecionada
+     * @param {string} secretaria - Nome da secretaria selecionada
+     */
+    function popularDepartamentos(secretaria) {
+      const departamentoSelect = document.getElementById('departamento');
+      
+      // Limpa as opções existentes
+      departamentoSelect.innerHTML = '';
+      
+      if (secretaria && secretariasDepartamentos[secretaria]) {
+        // Habilita o campo de departamento
+        departamentoSelect.disabled = false;
+        
+        // Adiciona opção padrão
+        const optionDefault = document.createElement('option');
+        optionDefault.value = '';
+        optionDefault.textContent = 'Selecione um departamento';
+        departamentoSelect.appendChild(optionDefault);
+        
+        // Adiciona os departamentos da secretaria selecionada
+        secretariasDepartamentos[secretaria].forEach(departamento => {
+          const option = document.createElement('option');
+          option.value = departamento;
+          option.textContent = departamento;
+          departamentoSelect.appendChild(option);
+        });
+      } else {
+        // Desabilita o campo se nenhuma secretaria foi selecionada
+        departamentoSelect.disabled = true;
+        const optionDefault = document.createElement('option');
+        optionDefault.value = '';
+        optionDefault.textContent = 'Primeiro selecione uma secretaria';
+        departamentoSelect.appendChild(optionDefault);
+      }
+    }
+
     /**
      * Função para atualizar a exibição do contador na tela
      * Atualiza o texto do contador e mostra/oculta a seção de informações
@@ -275,6 +735,7 @@
               <strong>Patrimônio:</strong> ${cadastro.patrimonio} | 
               <strong>Equipamento:</strong> ${cadastro.equipamento} | 
               <strong>Secretaria:</strong> ${cadastro.secretaria} | 
+              <strong>Departamento:</strong> ${cadastro.departamento} | 
               <strong>Data/Hora:</strong> ${dataHora}
             </div>
           `;
@@ -315,6 +776,9 @@
       // Limpa todos os campos do formulário
       document.getElementById('formulario').reset();
       
+      // Reseta o campo de departamento
+      popularDepartamentos('');
+      
       // Atualiza as exibições na tela
       atualizarContador();
       atualizarListaCadastros();
@@ -337,6 +801,12 @@
       
       // Foca automaticamente no campo patrimônio
       document.getElementById('patrimonio').focus();
+      
+      // Adiciona event listener para mudança na secretaria
+      document.getElementById('secretaria').addEventListener('change', function() {
+        const secretariaSelecionada = this.value;
+        popularDepartamentos(secretariaSelecionada);
+      });
     });
 
     /**
@@ -360,6 +830,7 @@
         patrimonio: document.getElementById('patrimonio').value,
         equipamento: document.getElementById('equipamento').value,
         secretaria: document.getElementById('secretaria').value,
+        departamento: document.getElementById('departamento').value,
         timestamp: new Date().toISOString()  // Timestamp atual em formato ISO
       };
 
